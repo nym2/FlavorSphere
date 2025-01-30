@@ -1,10 +1,10 @@
 from flask import Flask
 from flask_migrate import Migrate
-from app import create_app, db  # Update this import based on your app structure
+from app import create_app, db
 
 app = create_app()
 
-migrate = Migrate(app, db)  # Attach Migrate to app and db
+migrate = Migrate(app, db)
 
 if __name__ == "__main__":
     app.run()
