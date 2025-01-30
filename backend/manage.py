@@ -1,14 +1,10 @@
-from app import create_app
-from flask_migrate import MigrateCommand
-from flask_script import Manager
+from flask import Flask
+from flask_migrate import Migrate
+from app import create_app, db  # Update this import based on your app structure
 
 app = create_app()
 
-# Set up the Manager
-manager = Manager(app)
-
-# Add MigrateCommand to the Manager
-manager.add_command('db', MigrateCommand)
+migrate = Migrate(app, db)  # Attach Migrate to app and db
 
 if __name__ == "__main__":
-    manager.run()
+    app.run()

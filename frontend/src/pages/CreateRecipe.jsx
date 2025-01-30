@@ -1,4 +1,4 @@
-// src/pages/CreateRecipe.js
+// src/pages/CreateRecipe.jsx
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -14,7 +14,8 @@ const CreateRecipe = () => {
     axios.get('/api/categories')
       .then(response => {
         console.log(response.data);
-        setCategories(response.data);
+        // Ensure response data is an array before setting it
+        setCategories(Array.isArray(response.data) ? response.data : []);
       })
       .catch(error => console.error('Error fetching categories:', error));
   }, []);
@@ -51,7 +52,8 @@ const CreateRecipe = () => {
         onChange={(e) => setDescription(e.target.value)}
       />
       <select multiple onChange={handleCategoryChange}>
-        {categories.map(category => (
+        {/* Ensure categories is an array before trying to map */}
+        {Array.isArray(categories) && categories.map(category => (
           <option key={category.id} value={category.id}>
             {category.name}
           </option>

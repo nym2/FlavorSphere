@@ -4,7 +4,7 @@ from .models import db, Category, Recipe, Review
 routes = Blueprint('routes', __name__)
 
 # Route to get all categories
-@routes.route('/api/categories', methods=['GET'])
+@routes.route('/categories', methods=['GET'])  # Notice: no "/api" here
 def get_categories():
     categories = Category.query.all()
     return jsonify([{'id': category.id, 'name': category.name, 'priority': category.priority} for category in categories])
