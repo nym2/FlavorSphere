@@ -1,26 +1,24 @@
-// src/App.jsx
+// src/App.js
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Header from './components/Header.jsx';  // Import the Header component
-import RecipeList from './pages/RecipeList.jsx';
-import RecipeDetails from './pages/RecipeDetailsPage.jsx';  // Corrected import for RecipeDetails
-import CreateRecipe from './pages/CreateRecipe.jsx';  // CreateRecipe page
-import EditRecipe from './pages/EditRecipe.jsx';
-import HomePage from './pages/Home.jsx';  // Corrected import for HomePage
+import Home from './pages/Home';  // Import your pages
+import CreateRecipe from './pages/CreateRecipe';
+import RecipeList from './pages/RecipeList';
+import CreateCategory from './pages/CreateCategory.jsx';  // Import CreateCategory page
+import EditCategory from './pages/EditCategory.jsx';      // Import EditCategory page
+import Navbar from './components/Header'; // Import your Navbar
 
 function App() {
   return (
     <Router>
-      <div className="App">
-        <Header /> {/* Display the Header with navigation links */}
-        
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/recipes" element={<RecipeList />} />
-          <Route path="/recipes/:id" element={<RecipeDetails />} />
-          <Route path="/create-recipe" element={<CreateRecipe />} /> {/* CreateRecipe route */}
-          <Route path="/edit-recipe/:id" element={<EditRecipe />} />
-        </Routes>
-      </div>
+      <Navbar /> {/* Include your navbar */}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/create-recipe" element={<CreateRecipe />} />
+        <Route path="/recipes" element={<RecipeList />} />
+        <Route path="/create-category" element={<CreateCategory />} /> {/* Define route for create category */}
+        <Route path="/edit-category" element={<EditCategory />} />       {/* Define route for edit category */}
+      </Routes>
     </Router>
   );
 }

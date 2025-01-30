@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+ import Navbar from '../components/Header';  // Integrated Navbar
 
 const RecipeDetails = () => {
   const { id } = useParams();
@@ -10,21 +11,24 @@ const RecipeDetails = () => {
   const [recipe, setRecipe] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState('');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     // Fetch recipe details
     axios.get(`/recipes/${id}`)  // Updated to remove '/api' prefix
-      .then(response => {
-        setRecipe(response.data);
-      })
-      .catch(error => console.error('Error fetching recipe details:', error));
+      .then(response => setRecipe(response.data))
+      .catch(error => {
+        console.error('Error fetching recipe details:', error);
+        setError("Failed to load recipe details. Please try again later.");
+      });
 
     // Fetch reviews for the recipe
     axios.get(`/recipes/${id}/reviews`)  // Updated to remove '/api' prefix
-      .then(response => {
-        setReviews(response.data);
-      })
-      .catch(error => console.error('Error fetching reviews:', error));
+      .then(response => setReviews(response.data))
+      .catch(error => {
+        console.error('Error fetching reviews:', error);
+        setError("Failed to load reviews. Please try again later.");
+      });
   }, [id]);
 
   const handleDeleteRecipe = () => {
@@ -48,6 +52,8 @@ const RecipeDetails = () => {
 
   return (
     <div>
+      <Navbar /> {/* Integrated Navbar */}
+      {error && <p className="error-message">{error}</p>} {/* Display error message */}
       {recipe ? (
         <>
           <h1>{recipe.name}</h1>
@@ -59,8 +65,8 @@ const RecipeDetails = () => {
           {reviews.map(review => (
             <div key={review.id}>
               <p>{review.content}</p>
-              <button>Edit</button>
-              <button>Delete</button>
+              <button>Edit</button> {/* Implement edit functionality if needed */}
+              <button>Delete</button> {/* Implement delete functionality if needed */}
             </div>
           ))}
 

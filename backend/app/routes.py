@@ -5,7 +5,8 @@ from flask_cors import CORS
 routes = Blueprint('routes', __name__)
 
 # Enable CORS for this blueprint
-CORS(routes)
+CORS(routes, origins=["*"])
+
 
 # Home route
 @routes.route('/', methods=['GET'])

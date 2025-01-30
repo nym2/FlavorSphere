@@ -1,8 +1,8 @@
 // src/pages/EditRecipe.js
-
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Navbar from '../components/Header'; // Import Navbar for header integration
 
 const EditRecipe = () => {
   const { id } = useParams();
@@ -10,6 +10,7 @@ const EditRecipe = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [categoryPriority, setCategoryPriority] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch recipe details and categories
@@ -47,13 +48,16 @@ const EditRecipe = () => {
     };
     axios.put(`/recipes/${id}`, updatedRecipe)  // Updated to remove '/api' prefix
       .then(response => {
+        alert('Recipe updated successfully');
         // Redirect to recipe details or list page
+        navigate(`/recipes/${id}`);  // Redirect to recipe details page
       })
       .catch(error => console.error('Error updating recipe:', error));
   };
 
   return (
     <div>
+      <Navbar /> {/* Integrated Navbar */}
       {recipe ? (
         <>
           <h1>Edit Recipe</h1>
@@ -66,7 +70,11 @@ const EditRecipe = () => {
             value={recipe.description}
             onChange={(e) => setRecipe({ ...recipe, description: e.target.value })}
           />
-          <select multiple value={selectedCategories} onChange={(e) => setSelectedCategories([...e.target.selectedOptions].map(option => option.value))}>
+          <select
+            multiple
+            value={selectedCategories}
+            onChange={(e) => setSelectedCategories([...e.target.selectedOptions].map(option => option.value))}
+          >
             {categories.map(category => (
               <option key={category.id} value={category.id}>
                 {category.name}
