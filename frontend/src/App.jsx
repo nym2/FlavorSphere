@@ -1,12 +1,11 @@
 // src/App.jsx
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Header from './components/Header';  // Import the Header component
-import Home from './pages/Home';
-import RecipeList from './pages/RecipeList';
-import RecipeDetails from './pages/RecipeDetails';
-import CreateRecipe from './pages/CreateRecipe';
-import EditRecipe from './pages/EditRecipe';
-import HomePage from './pages/Home';
+import Header from './components/Header.jsx';  // Import the Header component
+import RecipeList from './pages/RecipeList.jsx';
+import RecipeDetails from './pages/RecipeDetailsPage.jsx';
+import CreateRecipe from './pages/CreateRecipe.jsx';
+import EditRecipe from './pages/EditRecipe.jsx';
+import HomePage from './pages/Home.jsx';
 
 function App() {
   return (

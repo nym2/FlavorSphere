@@ -1,5 +1,30 @@
-from . import db
+from flask_sqlalchemy import SQLAlchemy
 
-class Flavor(db.Model):
+db = SQLAlchemy()
+
+class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    priority = db.Column(db.Integer, nullable=False, default=0)  # Priority for categories
+    recipes = db.relationship('Recipe', backref='category', lazy=True)
+
+    def __repr__(self):
+        return f"<Category {self.name}>"
+
+class Recipe(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(500))
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+    reviews = db.relationship('Review', backref='recipe', lazy=True)
+
+    def __repr__(self):
+        return f"<Recipe {self.name}>"
+
+class Review(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(500), nullable=False)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
+
+    def __repr__(self):
+        return f"<Review {self.id} for Recipe {self.recipe_id}>"

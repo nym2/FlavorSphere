@@ -13,6 +13,7 @@ const CreateRecipe = () => {
     // Fetch available categories
     axios.get('/api/categories')
       .then(response => {
+        console.log(response.data);
         setCategories(response.data);
       })
       .catch(error => console.error('Error fetching categories:', error));
