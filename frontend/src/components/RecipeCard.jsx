@@ -6,7 +6,7 @@ function RecipeCard({ recipe }) {
     <div className="recipe-card">
       <h3>{recipe.title}</h3>
       <p>Category: {recipe.category}</p>
-      <Link to={`/recipe/${recipe.id}`}>View Details</Link>
+      <Link to={`/recipes/${recipe.id}`}>View Details</Link> {/* Updated URL */}
     </div>
   );
 }

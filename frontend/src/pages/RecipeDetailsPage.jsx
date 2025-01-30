@@ -13,14 +13,14 @@ const RecipeDetails = () => {
 
   useEffect(() => {
     // Fetch recipe details
-    axios.get(`/api/recipes/${id}`)
+    axios.get(`/recipes/${id}`)  // Updated to remove '/api' prefix
       .then(response => {
         setRecipe(response.data);
       })
       .catch(error => console.error('Error fetching recipe details:', error));
 
     // Fetch reviews for the recipe
-    axios.get(`/api/recipes/${id}/reviews`)
+    axios.get(`/recipes/${id}/reviews`)  // Updated to remove '/api' prefix
       .then(response => {
         setReviews(response.data);
       })
@@ -28,7 +28,7 @@ const RecipeDetails = () => {
   }, [id]);
 
   const handleDeleteRecipe = () => {
-    axios.delete(`/api/recipes/${id}`)
+    axios.delete(`/recipes/${id}`)  // Updated to remove '/api' prefix
       .then(() => {
         navigate('/recipes'); // Redirect to recipes list after deletion
       })
@@ -37,7 +37,7 @@ const RecipeDetails = () => {
 
   const handleAddReview = () => {
     if (newReview.trim()) {
-      axios.post(`/api/recipes/${id}/reviews`, { content: newReview })
+      axios.post(`/recipes/${id}/reviews`, { content: newReview })  // Updated to remove '/api' prefix
         .then(response => {
           setReviews([...reviews, response.data]);
           setNewReview('');

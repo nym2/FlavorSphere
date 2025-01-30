@@ -1,6 +1,11 @@
-from app import create_app
+from flask import Flask
+from flask_cors import CORS  # Import CORS
+from app.routes import routes  # Import your routes
 
-app = create_app()
+app = Flask(__name__)
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+# Enable CORS for the entire app
+CORS(app)
+
+# Register the routes blueprint without url_prefix
+app.register_blueprint(routes)

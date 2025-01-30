@@ -12,7 +12,7 @@ def create_app():
     # Initialize Migrate with the app and db
     migrate = Migrate(app, db)
 
-    # Register blueprint
-    app.register_blueprint(routes, url_prefix="/api")
+    # Register blueprint without url_prefix
+    app.register_blueprint(routes)
 
     return app

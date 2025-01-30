@@ -13,7 +13,7 @@ const EditRecipe = () => {
 
   useEffect(() => {
     // Fetch recipe details and categories
-    axios.get(`/api/recipes/${id}`)
+    axios.get(`/recipes/${id}`)  // Updated to remove '/api' prefix
       .then(response => {
         setRecipe(response.data);
         setSelectedCategories(response.data.categories.map(cat => cat.id));
@@ -26,7 +26,7 @@ const EditRecipe = () => {
       })
       .catch(error => console.error('Error fetching recipe:', error));
 
-    axios.get('/api/categories')
+    axios.get('/categories')  // Updated to remove '/api' prefix
       .then(response => {
         setCategories(response.data);
       })
@@ -45,7 +45,7 @@ const EditRecipe = () => {
         priority: categoryPriority[id],
       })),
     };
-    axios.put(`/api/recipes/${id}`, updatedRecipe)
+    axios.put(`/recipes/${id}`, updatedRecipe)  // Updated to remove '/api' prefix
       .then(response => {
         // Redirect to recipe details or list page
       })

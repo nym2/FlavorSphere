@@ -1,55 +1,40 @@
-// src/pages/RecipeList.js
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 
-function RecipeList() {
+const RecipeList = () => {
   const [recipes, setRecipes] = useState([]);
 
-  // Fetch the list of recipes from the API
   useEffect(() => {
-    fetch('/api/recipes')  // Adjust the API URL based on your backend setup
-      .then((response) => response.json())
-      .then((data) => setRecipes(data))
-      .catch((error) => console.error('Error fetching recipes:', error));
+    fetchRecipes();
   }, []);
 
-  // Handle deleting a recipe
-  const deleteRecipe = (id) => {
-    fetch(`/api/recipes/${id}`, {
-      method: 'DELETE',
-    })
-      .then((response) => {
-        if (response.ok) {
-          setRecipes(recipes.filter((recipe) => recipe.id !== id));
-        } else {
-          console.error('Error deleting recipe');
-        }
-      })
-      .catch((error) => console.error('Error deleting recipe:', error));
+  const fetchRecipes = async () => {
+    const response = await fetch('/recipes');  // Updated to remove '/api' prefix
+    const data = await response.json();
+    setRecipes(data);
+  };
+
+  const deleteRecipe = async (id) => {
+    const response = await fetch(`/recipes/${id}`, {  // Updated to remove '/api' prefix
+      method: 'DELETE'
+    });
+
+    if (response.ok) {
+      alert('Recipe deleted');
+      fetchRecipes();
+    }
   };
 
   return (
-    <div>
-      <h2>Recipe List</h2>
-      <ul>
-        {recipes.length === 0 ? (
-          <p>No recipes found.</p>
-        ) : (
-          recipes.map((recipe) => (
-            <li key={recipe.id}>
-              <h3>{recipe.name}</h3>
-              <p>{recipe.description}</p>
-              <div>
-                <Link to={`/recipes/${recipe.id}`}>View Details</Link> |{' '}
-                <Link to={`/edit-recipe/${recipe.id}`}>Edit</Link> |{' '}
-                <button onClick={() => deleteRecipe(recipe.id)}>Delete</button>
-              </div>
-            </li>
-          ))
-        )}
-      </ul>
+    <div className="recipe-list">
+      {recipes.map((recipe) => (
+        <div key={recipe.id} className="recipe-item">
+          <h3>{recipe.name}</h3>
+          <p>{recipe.description}</p>
+          <button onClick={() => deleteRecipe(recipe.id)}>Delete</button>
+        </div>
+      ))}
     </div>
   );
-}
+};
 
 export default RecipeList;
