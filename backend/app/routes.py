@@ -1,7 +1,11 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify
 
-api = Blueprint('api', __name__)
+main_bp = Blueprint('main', __name__, url_prefix='/')
 
-@api.route('/')
-def home():
-    return {"message": "Welcome to FlavorSphere API!"}
+@main_bp.route('/recipes', methods=['GET'])
+def get_recipes():
+    recipes = [
+        {"id": 1, "title": "Spaghetti Carbonara", "category": "Italian"},
+        {"id": 2, "title": "Chicken Tikka Masala", "category": "Indian"}
+    ]
+    return jsonify(recipes)
