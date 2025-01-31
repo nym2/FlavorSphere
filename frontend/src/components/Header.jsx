@@ -9,7 +9,7 @@ function Header() {
         <li><Link to="/create-recipe">Create Recipe</Link></li>
         <li><Link to="/recipes">View Recipes</Link></li>
         <li><Link to="/create-category">Create Category</Link></li> 
-        <li><Link to="/edit-category">Edit Category</Link></li> 
+        <li><Link to="/edit-recipes">Edit Recipes</Link></li> 
       </ul>
     </nav>
   );

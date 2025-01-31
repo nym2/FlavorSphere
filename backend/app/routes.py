@@ -120,6 +120,15 @@ def get_recipe(id):
         'reviews': [{'id': review.id, 'content': review.content} for review in recipe.reviews]
     })
 
+#route for fetching a recipe by ID 
+@routes.route('/recipes/<int:id>', methods=['GET'])
+def get_recipe(id):
+    recipe = Recipe.query.get(id)
+    if not recipe:
+        return jsonify({'message': 'Recipe not found'}), 404
+    return jsonify(recipe.serialize())  # Ensure it returns the recipe in the correct format
+
+
 # Route to update a recipe
 @routes.route('/recipes/<int:id>', methods=['PUT'])
 def update_recipe(id):

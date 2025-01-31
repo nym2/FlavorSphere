@@ -2,14 +2,14 @@
 import { useEffect, useState } from "react";
 import RecipeCard from "../components/RecipeCard";
 import axios from "axios";
-import Navbar from "../components/Header"; // Import Navbar for header integration
+import Navbar from "../components/Header"; 
 
 function HomePage() {
   const [recipes, setRecipes] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:5000/recipes")  // Updated to remove '/api' prefix
+    axios.get("http://127.0.0.1:5000/recipes")  
       .then((response) => setRecipes(response.data))
       .catch((error) => {
         console.error("Error fetching recipes:", error);
@@ -19,9 +19,9 @@ function HomePage() {
 
   return (
     <div className="homepage">
-      <Navbar /> {/* Integrated Navbar */}
+      <Navbar /> 
       <h2>All Recipes</h2>
-      {error && <p className="error-message">{error}</p>} {/* Display error message */}
+      {error && <p className="error-message">{error}</p>} 
       <div className="recipe-list">
         {recipes.length > 0 ? (
           recipes.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} />)

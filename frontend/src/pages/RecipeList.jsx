@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../components/Header';  
-import axios from 'axios';  
+import { Link } from 'react-router-dom'; // To navigate to the edit page
+import Navbar from '../components/Header';
+import axios from 'axios';
 
 const RecipeList = () => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
 
   useEffect(() => {
     fetchRecipes();
@@ -25,13 +25,13 @@ const RecipeList = () => {
 
   const deleteRecipe = async (id) => {
     try {
-      const response = await axios.delete("http://localhost:5000/recipes");  
+      const response = await axios.delete(`http://localhost:5000/recipes/${id}`);  
       if (response.status === 200) {
         alert('Recipe deleted');
-        fetchRecipes();  
+        fetchRecipes();  // Refresh the recipe list after deleting
       }
     } catch (error) {
-      alert(error.message);
+      alert('Error deleting recipe: ' + error.message);
     }
   };
 
@@ -54,6 +54,10 @@ const RecipeList = () => {
             <h3>{recipe.name}</h3>
             <p>{recipe.description}</p>
             <button onClick={() => deleteRecipe(recipe.id)}>Delete</button>
+            {/* Link to edit page with the recipe ID */}
+            <Link to={`/edit-recipes/${recipe.id}`}>
+              <button>Edit</button>
+            </Link>
           </div>
         ))
       )}
