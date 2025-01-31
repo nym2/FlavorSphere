@@ -1,9 +1,7 @@
-// src/pages/RecipeDetails.js
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
- import Navbar from '../components/Header';  // Integrated Navbar
+import Navbar from '../components/Header';  
 
 const RecipeDetails = () => {
   const { id } = useParams();
@@ -13,9 +11,12 @@ const RecipeDetails = () => {
   const [newReview, setNewReview] = useState('');
   const [error, setError] = useState(null);
 
+
+  const backendUrl = 'http://localhost:5000'; 
+
   useEffect(() => {
     // Fetch recipe details
-    axios.get(`/recipes/${id}`)  // Updated to remove '/api' prefix
+    axios.get(`${backendUrl}/recipes/${id}`)  
       .then(response => setRecipe(response.data))
       .catch(error => {
         console.error('Error fetching recipe details:', error);
@@ -23,7 +24,7 @@ const RecipeDetails = () => {
       });
 
     // Fetch reviews for the recipe
-    axios.get(`/recipes/${id}/reviews`)  // Updated to remove '/api' prefix
+    axios.get(`${backendUrl}/recipes/${id}/reviews`)  // Updated to use backend URL
       .then(response => setReviews(response.data))
       .catch(error => {
         console.error('Error fetching reviews:', error);
@@ -32,7 +33,7 @@ const RecipeDetails = () => {
   }, [id]);
 
   const handleDeleteRecipe = () => {
-    axios.delete(`/recipes/${id}`)  // Updated to remove '/api' prefix
+    axios.delete(`${backendUrl}/recipes/${id}`)  // Updated to use backend URL
       .then(() => {
         navigate('/recipes'); // Redirect to recipes list after deletion
       })
@@ -41,7 +42,7 @@ const RecipeDetails = () => {
 
   const handleAddReview = () => {
     if (newReview.trim()) {
-      axios.post(`/recipes/${id}/reviews`, { content: newReview })  // Updated to remove '/api' prefix
+      axios.post(`${backendUrl}/recipes/${id}/reviews`, { content: newReview })  // Updated to use backend URL
         .then(response => {
           setReviews([...reviews, response.data]);
           setNewReview('');
@@ -52,8 +53,8 @@ const RecipeDetails = () => {
 
   return (
     <div>
-      <Navbar /> {/* Integrated Navbar */}
-      {error && <p className="error-message">{error}</p>} {/* Display error message */}
+      <Navbar /> 
+      {error && <p className="error-message">{error}</p>} 
       {recipe ? (
         <>
           <h1>{recipe.name}</h1>
@@ -65,8 +66,8 @@ const RecipeDetails = () => {
           {reviews.map(review => (
             <div key={review.id}>
               <p>{review.content}</p>
-              <button>Edit</button> {/* Implement edit functionality if needed */}
-              <button>Delete</button> {/* Implement delete functionality if needed */}
+              <button>Edit</button> 
+              <button>Delete</button> 
             </div>
           ))}
 

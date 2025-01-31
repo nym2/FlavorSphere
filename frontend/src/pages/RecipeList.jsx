@@ -1,11 +1,12 @@
-// src/pages/RecipeList.js
 import React, { useState, useEffect } from 'react';
-import Navbar from '../components/Header';  // Add Navbar for consistent navigation
+import Navbar from '../components/Header';  
+import axios from 'axios';  
 
 const RecipeList = () => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
 
   useEffect(() => {
     fetchRecipes();
@@ -13,10 +14,8 @@ const RecipeList = () => {
 
   const fetchRecipes = async () => {
     try {
-      const response = await fetch('/recipes');  // Updated to remove '/api' prefix
-      if (!response.ok) throw new Error('Failed to fetch recipes');
-      const data = await response.json();
-      setRecipes(data);
+      const response = await axios.get("http://localhost:5000/recipes");  
+      setRecipes(response.data);
       setLoading(false);
     } catch (error) {
       setError(error.message);
@@ -26,12 +25,11 @@ const RecipeList = () => {
 
   const deleteRecipe = async (id) => {
     try {
-      const response = await fetch(`/recipes/${id}`, {  // Updated to remove '/api' prefix
-        method: 'DELETE'
-      });
-      if (!response.ok) throw new Error('Failed to delete recipe');
-      alert('Recipe deleted');
-      fetchRecipes();
+      const response = await axios.delete("http://localhost:5000/recipes");  
+      if (response.status === 200) {
+        alert('Recipe deleted');
+        fetchRecipes();  
+      }
     } catch (error) {
       alert(error.message);
     }
@@ -47,7 +45,7 @@ const RecipeList = () => {
 
   return (
     <div className="recipe-list">
-      <Navbar /> {/* Add Navbar */}
+      <Navbar /> 
       {recipes.length === 0 ? (
         <p>No recipes available</p>
       ) : (

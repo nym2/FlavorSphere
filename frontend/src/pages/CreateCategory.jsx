@@ -1,74 +1,43 @@
-// src/pages/CreateCategory.js
-import React, { useState } from 'react';
+import { useState } from "react";
+import axios from "axios";
 
-const CreateCategory = () => {
-  const [name, setName] = useState(''); // Category name state
-  const [priority, setPriority] = useState(0); // Category priority state
-  const [error, setError] = useState(null); // Error message state
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+function CreateCategory() {
+  const [categoryName, setCategoryName] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true); // Show loading spinner
-
     try {
-      const response = await fetch('/categories', { // Make sure to use the correct endpoint
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, priority }), // Sending name and priority
+      const response = await axios.post("http://localhost:5000/categories", {
+        name: categoryName,
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create category');
+      if (response.status === 201) {
+        alert("Category created successfully!");
+        setCategoryName(""); // Clear input field after submission
       }
-
-      alert('Category created successfully');
-      setName(''); // Reset form fields
-      setPriority(0);
-    } catch (err) {
-      setError(err.message); // Display error message if any
-    } finally {
-      setIsLoading(false); // Reset loading state
+    } catch (error) {
+      console.error("Error creating category:", error);
+      alert("Failed to create category");
     }
   };
 
   return (
-    <div>
-      <h2>Create New Category</h2>
-
-      {isLoading && <p>Loading...</p>} {/* Show loading message */}
-      {error && <p style={{ color: 'red' }}>{error}</p>} {/* Show error message */}
-
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Category Name</label>
+    <div className="form-container">
+      <div className="form-box">
+        <h2>Create Category</h2>
+        <form onSubmit={handleSubmit}>
           <input
             type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            placeholder="Category Name"
+            value={categoryName}
+            onChange={(e) => setCategoryName(e.target.value)}
             required
           />
-        </div>
-
-        <div>
-          <label htmlFor="priority">Priority</label>
-          <input
-            type="number"
-            id="priority"
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
-            min="0"
-            required
-          />
-        </div>
-
-        <button type="submit" disabled={isLoading}>Create Category</button>
-      </form>
+          <button type="submit">Create</button>
+        </form>
+      </div>
     </div>
   );
-};
+}
 
 export default CreateCategory;

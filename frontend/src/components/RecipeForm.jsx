@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const RecipeForm = ({ onSubmit }) => {
-  const [categories, setCategories] = useState([]);
+const RecipeForm = ({ onSubmit, categories }) => {
   const [recipeData, setRecipeData] = useState({
     name: '',
     description: '',
@@ -10,27 +9,7 @@ const RecipeForm = ({ onSubmit }) => {
   const [error, setError] = useState(null); // To hold form errors
   const [isLoading, setIsLoading] = useState(false); // To show loading indicator
 
-  // Fetch categories from the backend
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
-    setIsLoading(true); // Start loading
-    try {
-      const response = await fetch('/categories'); // Correct endpoint for categories
-      if (!response.ok) {
-        throw new Error('Failed to fetch categories');
-      }
-      const data = await response.json();
-      setCategories(data);
-    } catch (err) {
-      setError('Failed to fetch categories');
-    } finally {
-      setIsLoading(false); // Stop loading after fetch
-    }
-  };
-
+  // Handle input changes for text fields and select
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setRecipeData({
@@ -39,7 +18,8 @@ const RecipeForm = ({ onSubmit }) => {
     });
   };
 
-  const handleSubmit = async (e) => {
+  // Handle form submission
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     // Validation to ensure all fields are filled
@@ -51,26 +31,10 @@ const RecipeForm = ({ onSubmit }) => {
     setError(null); // Clear any previous errors
     setIsLoading(true); // Start loading during submission
 
-    try {
-      const response = await fetch('/recipes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(recipeData),
-      });
+    // Pass the data to the parent component (handleRecipeSubmit)
+    onSubmit(recipeData);
 
-      if (!response.ok) {
-        throw new Error('Failed to create recipe');
-      }
-
-      const newRecipe = await response.json();
-      onSubmit(newRecipe); // Pass the new recipe to the parent component
-    } catch (err) {
-      setError('Failed to create recipe');
-    } finally {
-      setIsLoading(false); // Stop loading after submission
-    }
+    setIsLoading(false); // Stop loading after submission
   };
 
   return (
@@ -78,6 +42,7 @@ const RecipeForm = ({ onSubmit }) => {
       {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message */}
       {isLoading && <p>Loading...</p>} {/* Show loading message */}
 
+      {/* Recipe Name */}
       <input
         type="text"
         name="name"
@@ -86,12 +51,16 @@ const RecipeForm = ({ onSubmit }) => {
         onChange={handleInputChange}
         required
       />
+
+      {/* Recipe Description */}
       <textarea
         name="description"
         placeholder="Description"
         value={recipeData.description}
         onChange={handleInputChange}
       />
+
+      {/* Category Dropdown */}
       <select
         name="category_id"
         value={recipeData.category_id}
@@ -105,6 +74,8 @@ const RecipeForm = ({ onSubmit }) => {
           </option>
         ))}
       </select>
+
+      {/* Submit Button */}
       <button type="submit" disabled={isLoading}>
         Create Recipe
       </button>

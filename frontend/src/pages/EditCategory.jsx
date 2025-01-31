@@ -1,95 +1,51 @@
-// src/pages/EditCategory.jsx
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
-const EditCategory = () => {
-  const { id } = useParams(); // Get category ID from the URL
-  const [name, setName] = useState('');
-  const [priority, setPriority] = useState(0);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Initially loading to fetch data
+function EditCategory() {
+  const { id } = useParams(); // Get category ID from URL
+  const [categoryName, setCategoryName] = useState("");
 
+  // Fetch category details
   useEffect(() => {
-    const fetchCategory = async () => {
-      try {
-        const response = await fetch(`/categories/${id}`);
-        if (!response.ok) {
-          throw new Error('Category not found');
-        }
-
-        const category = await response.json();
-        setName(category.name);
-        setPriority(category.priority);
-        setIsLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setIsLoading(false);
-      }
-    };
-
-    fetchCategory();
+    axios
+      .get(`http://127.0.0.1:5000`)
+      .then((response) => setCategoryName(response.data.name))
+      .catch((error) => console.error("Error fetching category:", error));
   }, [id]);
 
-  const handleSubmit = async (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-
     try {
-      const response = await fetch(`/categories/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, priority }), // Send updated category data
+      const response = await axios.put(`http://127.0.0.1:5000`, {
+        name: categoryName,
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to update category');
+      if (response.status === 200) {
+        alert("Category updated successfully!");
       }
-
-      alert('Category updated successfully');
-    } catch (err) {
-      setError(err.message); // Display error message if update fails
-    } finally {
-      setIsLoading(false); // Reset loading state
+    } catch (error) {
+      console.error("Error updating category:", error);
+      alert("Failed to update category");
     }
   };
 
   return (
-    <div>
-      <h2>Edit Category</h2>
-
-      {isLoading && <p>Loading...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Category Name</label>
+    <div className="form-container">
+      <div className="form-box">
+        <h2>Edit Category</h2>
+        <form onSubmit={handleUpdate}>
           <input
             type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={categoryName}
+            onChange={(e) => setCategoryName(e.target.value)}
             required
           />
-        </div>
-
-        <div>
-          <label htmlFor="priority">Priority</label>
-          <input
-            type="number"
-            id="priority"
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
-            min="0"
-            required
-          />
-        </div>
-
-        <button type="submit" disabled={isLoading}>Update Category</button>
-      </form>
+          <button type="submit">Update</button>
+        </form>
+      </div>
     </div>
   );
-};
+}
 
 export default EditCategory;

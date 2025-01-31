@@ -9,7 +9,7 @@ function HomePage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:5000")  // Updated to remove '/api' prefix
+    axios.get("http://127.0.0.1:5000/recipes")  // Updated to remove '/api' prefix
       .then((response) => setRecipes(response.data))
       .catch((error) => {
         console.error("Error fetching recipes:", error);
