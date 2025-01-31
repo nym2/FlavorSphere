@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000';  // URL of your Flask backend
+const API_URL = 'http://localhost:5000';  
 
-// Get all categories
+
 export const getCategories = async () => {
   try {
     const response = await axios.get(`${API_URL}/categories`);
