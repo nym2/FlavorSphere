@@ -6,10 +6,9 @@ const RecipeForm = ({ onSubmit, categories }) => {
     description: '',
     category_id: ''
   });
-  const [error, setError] = useState(null); // To hold form errors
-  const [isLoading, setIsLoading] = useState(false); // To show loading indicator
+  const [error, setError] = useState(null); 
+  const [isLoading, setIsLoading] = useState(false); 
 
-  // Handle input changes for text fields and select
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setRecipeData({
@@ -18,31 +17,29 @@ const RecipeForm = ({ onSubmit, categories }) => {
     });
   };
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validation to ensure all fields are filled
     if (!recipeData.name || !recipeData.category_id) {
       setError('Please fill in all required fields');
       return;
     }
 
-    setError(null); // Clear any previous errors
-    setIsLoading(true); // Start loading during submission
+    setError(null); 
+    setIsLoading(true); 
 
-    // Pass the data to the parent component (handleRecipeSubmit)
+    
     onSubmit(recipeData);
 
-    setIsLoading(false); // Stop loading after submission
+    setIsLoading(false); 
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message */}
-      {isLoading && <p>Loading...</p>} {/* Show loading message */}
+      {error && <p style={{ color: 'red' }}>{error}</p>} 
+      {isLoading && <p>Loading...</p>} 
 
-      {/* Recipe Name */}
+      
       <input
         type="text"
         name="name"
@@ -52,7 +49,7 @@ const RecipeForm = ({ onSubmit, categories }) => {
         required
       />
 
-      {/* Recipe Description */}
+      
       <textarea
         name="description"
         placeholder="Description"
@@ -60,7 +57,7 @@ const RecipeForm = ({ onSubmit, categories }) => {
         onChange={handleInputChange}
       />
 
-      {/* Category Dropdown */}
+      
       <select
         name="category_id"
         value={recipeData.category_id}
@@ -75,7 +72,7 @@ const RecipeForm = ({ onSubmit, categories }) => {
         ))}
       </select>
 
-      {/* Submit Button */}
+      
       <button type="submit" disabled={isLoading}>
         Create Recipe
       </button>
