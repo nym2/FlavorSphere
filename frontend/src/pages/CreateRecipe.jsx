@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import RecipeForm from '../components/RecipeForm'; // Import RecipeForm component
-import Navbar from '../components/Header';  // Import Navbar for header integration
-import axios from 'axios';  // Import axios
+import RecipeForm from '../components/RecipeForm'; 
+import Navbar from '../components/Header';  
+import axios from 'axios';  
 
 const CreateRecipe = () => {
-  const [isLoading, setIsLoading] = useState(false); // To track loading state
-  const [error, setError] = useState(null); // To track any error messages
-  const [categories, setCategories] = useState([]); // To store categories
+  const [isLoading, setIsLoading] = useState(false); 
+  const [error, setError] = useState(null); 
+  const [categories, setCategories] = useState([]); 
 
   const backendUrl = 'http://localhost:5000';
 
@@ -26,10 +26,10 @@ const CreateRecipe = () => {
 
   const handleRecipeSubmit = async (recipeData) => {
     setIsLoading(true);
-    setError(null); // Reset error state
+    setError(null); 
 
     try {
-      console.log('Submitting recipe data:', recipeData); // Log the data being submitted
+      console.log('Submitting recipe data:', recipeData); 
 
       const response = await axios.post(`${backendUrl}/recipes`, recipeData, {
         headers: {
@@ -37,14 +37,14 @@ const CreateRecipe = () => {
         },
       });
 
-      console.log('Recipe created:', response.data); // Log the response from the server
+      console.log('Recipe created:', response.data); 
 
       alert('Recipe created successfully');
     } catch (err) {
       setError(err.message);
       console.error('Error creating recipe:', err);
     } finally {
-      setIsLoading(false); // Stop loading after submission
+      setIsLoading(false); 
     }
   };
 

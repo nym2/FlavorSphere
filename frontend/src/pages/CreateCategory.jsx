@@ -13,7 +13,7 @@ function CreateCategory() {
 
       if (response.status === 201) {
         alert("Category created successfully!");
-        setCategoryName(""); // Clear input field after submission
+        setCategoryName(""); 
       }
     } catch (error) {
       console.error("Error creating category:", error);
