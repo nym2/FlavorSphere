@@ -4,7 +4,6 @@ from flask_cors import CORS
 
 routes = Blueprint('routes', __name__)
 
-# Enable CORS for this blueprint
 CORS(routes, origins=["*"])
 
 
@@ -33,7 +32,7 @@ def create_category():
 
     new_category = Category(
         name=data['name'],
-        priority=data.get('priority', 0)  # Default priority is 0 if not provided
+        priority=data.get('priority', 0)  
     )
     db.session.add(new_category)
     db.session.commit()
@@ -60,12 +59,11 @@ def update_category(id):
     db.session.commit()
     return jsonify({'message': 'Category updated successfully'}), 200
 
-# Route to delete a category (and its associated recipes)
+# Route to delete a category 
 @routes.route('/categories/<int:id>', methods=['DELETE'])
 def delete_category(id):
     category = Category.query.get_or_404(id)
     
-    # Cascading delete: recipes will be deleted when the category is deleted
     db.session.delete(category)
     db.session.commit()
     return jsonify({'message': 'Category deleted successfully and associated recipes removed'}), 200
@@ -100,7 +98,7 @@ def create_recipe():
 
     new_recipe = Recipe(
         name=data['name'],
-        description=data.get('description', ''),  # Default to empty string if not provided
+        description=data.get('description', ''),  
         category_id=data['category_id']
     )
     db.session.add(new_recipe)
@@ -120,16 +118,14 @@ def get_recipe(id):
         'reviews': [{'id': review.id, 'content': review.content} for review in recipe.reviews]
     })
 
-#route for fetching a recipe by ID 
 @routes.route('/recipes/<int:id>', methods=['GET'])
 def get_recipe(id):
     recipe = Recipe.query.get(id)
     if not recipe:
         return jsonify({'message': 'Recipe not found'}), 404
-    return jsonify(recipe.serialize())  # Ensure it returns the recipe in the correct format
+    return jsonify(recipe.serialize())  
 
 
-# Route to update a recipe
 @routes.route('/recipes/<int:id>', methods=['PUT'])
 def update_recipe(id):
     recipe = Recipe.query.get_or_404(id)
@@ -147,12 +143,10 @@ def update_recipe(id):
     db.session.commit()
     return jsonify({'message': 'Recipe updated successfully'}), 200
 
-# Route to delete a recipe (and its associated reviews)
 @routes.route('/recipes/<int:id>', methods=['DELETE'])
 def delete_recipe(id):
     recipe = Recipe.query.get_or_404(id)
     
-    # Cascading delete: reviews will be deleted when the recipe is deleted
     db.session.delete(recipe)
     db.session.commit()
 
