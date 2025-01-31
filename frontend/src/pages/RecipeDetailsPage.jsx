@@ -33,16 +33,16 @@ const RecipeDetails = () => {
   }, [id]);
 
   const handleDeleteRecipe = () => {
-    axios.delete(`${backendUrl}/recipes/${id}`)  // Updated to use backend URL
+    axios.delete(`${backendUrl}/recipes/${id}`)  
       .then(() => {
-        navigate('/recipes'); // Redirect to recipes list after deletion
+        navigate('/recipes'); 
       })
       .catch(error => console.error('Error deleting recipe:', error));
   };
 
   const handleAddReview = () => {
     if (newReview.trim()) {
-      axios.post(`${backendUrl}/recipes/${id}/reviews`, { content: newReview })  // Updated to use backend URL
+      axios.post(`${backendUrl}/recipes/${id}/reviews`, { content: newReview })  
         .then(response => {
           setReviews([...reviews, response.data]);
           setNewReview('');
