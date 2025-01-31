@@ -5,8 +5,8 @@ db = SQLAlchemy()
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    priority = db.Column(db.Integer, nullable=False, default=0)  # Priority for categories
-    recipes = db.relationship('Recipe', backref='category', lazy=True, cascade="all, delete-orphan")  # Cascade delete
+    priority = db.Column(db.Integer, nullable=False, default=0)  
+    recipes = db.relationship('Recipe', backref='category', lazy=True, cascade="all, delete-orphan")  
 
     def __repr__(self):
         return f"<Category {self.name}>"
@@ -16,7 +16,7 @@ class Recipe(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(500))
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
-    reviews = db.relationship('Review', backref='recipe', lazy=True, cascade="all, delete-orphan")  # Cascade delete
+    reviews = db.relationship('Review', backref='recipe', lazy=True, cascade="all, delete-orphan")  
 
     def __repr__(self):
         return f"<Recipe {self.name}>"
