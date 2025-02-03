@@ -9,6 +9,9 @@ flask = "*"
 flask-migrate = "*"
 flask-script = "*"
 flask-cors = "*"
+psycopg2-binary = "*"
+python-dotenv = "*"
+gunicorn = "*"
 
 [dev-packages]
 
