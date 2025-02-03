@@ -6,8 +6,9 @@ const RecipeForm = ({ onSubmit, categories }) => {
     description: '',
     category_id: ''
   });
-  const [error, setError] = useState(null); 
-  const [isLoading, setIsLoading] = useState(false); 
+
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -17,7 +18,16 @@ const RecipeForm = ({ onSubmit, categories }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  // ✅ Function to reset the form fields
+  const resetForm = () => {
+    setRecipeData({
+      name: '',
+      description: '',
+      category_id: ''
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!recipeData.name || !recipeData.category_id) {
@@ -25,21 +35,23 @@ const RecipeForm = ({ onSubmit, categories }) => {
       return;
     }
 
-    setError(null); 
-    setIsLoading(true); 
+    setError(null);
+    setIsLoading(true);
 
-    
-    onSubmit(recipeData);
-
-    setIsLoading(false); 
+    try {
+      await onSubmit(recipeData, resetForm); // ✅ Pass resetForm to onSubmit in parent component
+    } catch (error) {
+      setError('Failed to create recipe. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      {error && <p style={{ color: 'red' }}>{error}</p>} 
-      {isLoading && <p>Loading...</p>} 
-
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       
+
       <input
         type="text"
         name="name"
@@ -49,7 +61,6 @@ const RecipeForm = ({ onSubmit, categories }) => {
         required
       />
 
-      
       <textarea
         name="description"
         placeholder="Description"
@@ -57,7 +68,6 @@ const RecipeForm = ({ onSubmit, categories }) => {
         onChange={handleInputChange}
       />
 
-      
       <select
         name="category_id"
         value={recipeData.category_id}
@@ -72,9 +82,8 @@ const RecipeForm = ({ onSubmit, categories }) => {
         ))}
       </select>
 
-      
       <button type="submit" disabled={isLoading}>
-        Create Recipe
+        {isLoading ? "Creating..." : "Create Recipe"}
       </button>
     </form>
   );

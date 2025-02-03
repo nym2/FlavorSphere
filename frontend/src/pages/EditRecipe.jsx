@@ -9,37 +9,29 @@ const EditRecipe = () => {
   const [selectedRecipeId, setSelectedRecipeId] = useState(id || '');
   const [recipe, setRecipe] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [reviews, setReviews] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
   const [categoryPriority, setCategoryPriority] = useState({});
   const navigate = useNavigate();
 
+  const backendUrl = 'https://flavorsphere.onrender.com'; // Ensure this matches your backend URL
+
   useEffect(() => {
-    axios.get('http://localhost:5000/recipes')
-      .then(response => {
-        setRecipes(response.data);
-      })
+    // Fetch all recipes
+    axios.get(`${backendUrl}/recipes`)
+      .then(response => setRecipes(response.data))
       .catch(error => console.error('Error fetching recipes:', error));
 
-    axios.get('http://localhost:5000/categories')
-      .then(response => {
-        setCategories(response.data);
-      })
+    // Fetch all categories
+    axios.get(`${backendUrl}/categories`)
+      .then(response => setCategories(response.data))
       .catch(error => console.error('Error fetching categories:', error));
-
-    axios.get('http://localhost:5000/reviews')
-      .then(response => {
-        setReviews(response.data);
-      })
-      .catch(error => console.error('Error fetching reviews:', error));
   }, []);
 
   useEffect(() => {
     if (selectedRecipeId) {
-      axios.get(`http://localhost:5000/recipes/${selectedRecipeId}`)
+      // Fetch the selected recipe details for editing
+      axios.get(`${backendUrl}/recipes/${selectedRecipeId}`)
         .then(response => {
           setRecipe(response.data);
-          setSelectedCategories(response.data.categories.map(cat => cat.id));
           setCategoryPriority(
             response.data.categories.reduce((acc, category) => {
               acc[category.id] = category.priority || 0;
@@ -56,18 +48,23 @@ const EditRecipe = () => {
   };
 
   const handleSubmit = () => {
+    if (!recipe) return;
+
     const updatedRecipe = {
-      ...recipe,
-      categories: selectedCategories.map(id => ({
-        id,
-        priority: categoryPriority[id] || 0,
+      name: recipe.name,
+      description: recipe.description,
+      category_id: recipe.category_id, // Ensure the correct category ID is attached to the recipe
+      categories: categories.map(cat => ({
+        id: cat.id,
+        priority: categoryPriority[cat.id] || 0, // Send the priority for each category
       })),
     };
 
-    axios.put(`http://localhost:5000/recipes/${selectedRecipeId}`, updatedRecipe)
+    // Update the recipe
+    axios.put(`${backendUrl}/recipes/${selectedRecipeId}`, updatedRecipe)
       .then(response => {
         alert('Recipe updated successfully');
-        navigate('/recipes'); 
+        navigate('/recipes'); // Redirect to the recipes list
       })
       .catch(error => console.error('Error updating recipe:', error));
   };
@@ -110,8 +107,14 @@ const EditRecipe = () => {
             <label>Select Categories:</label>
             <select
               multiple
-              value={selectedCategories}
-              onChange={(e) => setSelectedCategories([...e.target.selectedOptions].map(option => option.value))}
+              value={recipe.categories?.map(cat => cat.id) || []}
+              onChange={(e) => setRecipe({
+                ...recipe,
+                categories: [...e.target.selectedOptions].map(option => ({
+                  id: option.value,
+                  name: option.label,
+                })),
+              })}
               className="select-categories"
             >
               {categories.map(category => (
@@ -119,13 +122,13 @@ const EditRecipe = () => {
               ))}
             </select>
 
-            {selectedCategories.map(categoryId => (
-              <div key={categoryId} className="priority-input">
-                <label>Priority for {categories.find(cat => cat.id === categoryId)?.name}</label>
+            {recipe.categories?.map(category => (
+              <div key={category.id} className="priority-input">
+                <label>Priority for {category.name}</label>
                 <input
                   type="number"
-                  value={categoryPriority[categoryId] || 0}
-                  onChange={(e) => handleCategoryPriorityChange(categoryId, e.target.value)}
+                  value={categoryPriority[category.id] || 0}
+                  onChange={(e) => handleCategoryPriorityChange(category.id, e.target.value)}
                   className="input-priority"
                 />
               </div>

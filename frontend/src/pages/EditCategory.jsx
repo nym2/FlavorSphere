@@ -9,7 +9,7 @@ function EditCategory() {
   // Fetch category details
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:5000`)
+      .get(`https://flavorsphere.onrender.com`)
       .then((response) => setCategoryName(response.data.name))
       .catch((error) => console.error("Error fetching category:", error));
   }, [id]);
@@ -17,7 +17,7 @@ function EditCategory() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`http://127.0.0.1:5000`, {
+      const response = await axios.put(`https://flavorsphere.onrender.com`, {
         name: categoryName,
       });
 

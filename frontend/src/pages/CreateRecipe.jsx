@@ -8,13 +8,15 @@ const CreateRecipe = () => {
   const [error, setError] = useState(null); 
   const [categories, setCategories] = useState([]); 
 
-  const backendUrl = 'http://localhost:5000';
+  // Correctly define the backend URL
+  const backendUrl = 'https://flavorsphere.onrender.com'; // Confirm this URL is live
 
+  // Fetch categories when the component mounts
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(`${backendUrl}/categories`);
-        setCategories(response.data);
+        setCategories(response.data); // Set categories on success
       } catch (err) {
         console.error('Error fetching categories:', err);
         setError('Failed to fetch categories. Please try again later.');
@@ -24,58 +26,46 @@ const CreateRecipe = () => {
     fetchCategories();
   }, []);
 
-  const handleRecipeSubmit = async (recipeData) => {
+  // Handle recipe form submission
+  const handleRecipeSubmit = async (recipeData, resetForm) => {
     setIsLoading(true);
     setError(null); 
 
     try {
-      console.log('Submitting recipe data:', recipeData); 
+      console.log('Submitting recipe data:', recipeData);
 
+      // Send POST request to backend
       const response = await axios.post(`${backendUrl}/recipes`, recipeData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
-      console.log('Recipe created:', response.data); 
+      const newRecipeId = response.data.id; // Get the assigned recipe ID
+      console.log('Recipe created with ID:', newRecipeId);
 
-      alert('Recipe created successfully');
+      alert(`Recipe created successfully! ID: ${newRecipeId}`);
 
-      // Clear the form fields after successful submission
-      handleResetForm();  // Reset the form here
+      resetForm(); // Reset form fields after success
     } catch (err) {
-      setError(err.message);
+      setError('Error creating recipe: ' + err.message); // Display the error message
       console.error('Error creating recipe:', err);
     } finally {
-      setIsLoading(false); 
-    }
-  };
-
-  // Function to reset the form
-  const handleResetForm = () => {
-    // Assuming RecipeForm has a method to reset the form, which we pass as a prop
-    if (document.querySelector('form')) {
-      document.querySelector('form').reset();
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="create-recipe-container">
-      <Navbar /> {/* Integrated Navbar */}
+      <Navbar />
       <div className="create-recipe-box">
         <h2>Create New Recipe</h2>
 
-        {/* Display loading message while form submission is in progress */}
-        {isLoading && <p>Loading...</p>}
+        {isLoading && <p>Loading...</p>} {/* Show loading indicator */}
+        {error && <p style={{ color: 'red' }}>{error}</p>} {/* Show error message */}
 
-        {/* Display error message if there's any error */}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-
-        {/* Pass the submit handler, categories, and reset function to RecipeForm */}
-        <RecipeForm
-          onSubmit={handleRecipeSubmit}
-          categories={categories} // Pass categories to the form
-        />
+        {/* Render the form component with categories and submit handler */}
+        <RecipeForm onSubmit={handleRecipeSubmit} categories={categories} />
       </div>
     </div>
   );

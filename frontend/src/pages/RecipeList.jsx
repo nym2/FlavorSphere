@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Header';
 import axios from 'axios';
 
@@ -14,7 +14,7 @@ const RecipeList = () => {
 
   const fetchRecipes = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/recipes");  
+      const response = await axios.get("https://flavorsphere.onrender.com/recipes");  
       setRecipes(response.data);
       setLoading(false);
     } catch (error) {
@@ -24,14 +24,17 @@ const RecipeList = () => {
   };
 
   const deleteRecipe = async (id) => {
-    try {
-      const response = await axios.delete(`http://localhost:5000/recipes/${id}`);  
-      if (response.status === 200) {
-        alert('Recipe deleted');
-        fetchRecipes();  
+    const confirmDelete = window.confirm('Are you sure you want to delete this recipe?');
+    if (confirmDelete) {
+      try {
+        const response = await axios.delete(`https://flavorsphere.onrender.com/recipes/${id}`);  
+        if (response.status === 200) {
+          setRecipes(recipes.filter(recipe => recipe.id !== id));  // Update state directly after deletion
+          alert('Recipe deleted');
+        }
+      } catch (error) {
+        alert('Error deleting recipe: ' + error.message);
       }
-    } catch (error) {
-      alert('Error deleting recipe: ' + error.message);
     }
   };
 
