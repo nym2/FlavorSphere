@@ -7,7 +7,7 @@ function RecipeCard({ recipe }) {
       <h3>{recipe.name}</h3>
       <p>Category: {recipe.category}</p> 
       <p>Description: {recipe.description}</p>
-      <Link to={`/recipes/${recipe.id}`}>View Details</Link> 
+      <Link to={`/RecipeDetailsPage/${recipe.id}`}>View Details</Link> 
     </div>
   );
 }

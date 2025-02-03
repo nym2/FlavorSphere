@@ -40,11 +40,22 @@ const CreateRecipe = () => {
       console.log('Recipe created:', response.data); 
 
       alert('Recipe created successfully');
+
+      // Clear the form fields after successful submission
+      handleResetForm();  // Reset the form here
     } catch (err) {
       setError(err.message);
       console.error('Error creating recipe:', err);
     } finally {
       setIsLoading(false); 
+    }
+  };
+
+  // Function to reset the form
+  const handleResetForm = () => {
+    // Assuming RecipeForm has a method to reset the form, which we pass as a prop
+    if (document.querySelector('form')) {
+      document.querySelector('form').reset();
     }
   };
 
@@ -60,7 +71,7 @@ const CreateRecipe = () => {
         {/* Display error message if there's any error */}
         {error && <p style={{ color: 'red' }}>{error}</p>}
 
-        {/* Pass the submit handler and categories to RecipeForm */}
+        {/* Pass the submit handler, categories, and reset function to RecipeForm */}
         <RecipeForm
           onSubmit={handleRecipeSubmit}
           categories={categories} // Pass categories to the form

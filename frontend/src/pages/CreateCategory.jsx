@@ -22,8 +22,8 @@ function CreateCategory() {
   };
 
   return (
-    <div className="form-container">
-      <div className="form-box">
+    <div className="create-category-container">
+      <div className="create-category-box">
         <h2>Create Category</h2>
         <form onSubmit={handleSubmit}>
           <input

@@ -7,6 +7,7 @@ import RecipeList from './pages/RecipeList';
 import CreateCategory from './pages/CreateCategory.jsx';  
 import EditRecipes from './pages/EditRecipe.jsx';      
 import Navbar from './components/Header'; 
+import RecipeDetailsPage from './pages/RecipeDetailsPage.jsx';
 
 function App() {
   return (
@@ -17,7 +18,8 @@ function App() {
         <Route path="/create-recipe" element={<CreateRecipe />} />
         <Route path="/recipes" element={<RecipeList />} />
         <Route path="/create-category" element={<CreateCategory />} /> 
-        <Route path="/edit:/id" element={<EditRecipes />} />       
+        <Route path="/edit-recipes" element={<EditRecipes />} />
+        <Route path="/RecipeDetailsPage/:id" element={<RecipeDetailsPage />} />       
       </Routes>
     </Router>
   );

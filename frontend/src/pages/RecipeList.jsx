@@ -54,9 +54,6 @@ const RecipeList = () => {
             <h3>{recipe.name}</h3>
             <p>{recipe.description}</p>
             <button onClick={() => deleteRecipe(recipe.id)}>Delete</button>
-            <Link to={`/edit-recipes/${recipe.id}`}>
-              <button>Edit</button>
-            </Link>
           </div>
         ))
       )}
