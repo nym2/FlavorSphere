@@ -1,3 +1,4 @@
+# ./backend/app/__init.py
 import os
 from flask import Flask
 from flask_migrate import Migrate  
@@ -24,7 +25,7 @@ def create_app():
 
     return app
 
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app()
-    
     app.run(debug=True, host='0.0.0.0')
