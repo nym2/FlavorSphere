@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'; 
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Header';
@@ -7,18 +7,20 @@ const RecipeDetails = () => {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
   const [newReview, setNewReview] = useState('');
+  const [reviews, setReviews] = useState([]);
   const [error, setError] = useState(null);
   const [reviewError, setReviewError] = useState(null);
-  const [reviewSubmitted, setReviewSubmitted] = useState(false);
-  const [reviews, setReviews] = useState([]);
+  const [editingReview, setEditingReview] = useState(null);
+  const [editedReviewContent, setEditedReviewContent] = useState('');
 
   const backendUrl = 'https://flavorsphere.onrender.com';
 
+
   useEffect(() => {
-    // Fetch recipe details
     axios.get(`${backendUrl}/recipes`)
       .then(response => {
-        setRecipe(response.data);
+        console.log("Fetched recipe details:", response.data);
+        setRecipe(response.data); // Recipe details are set correctly
       })
       .catch(error => {
         console.error('Error fetching recipe details:', error);
@@ -26,16 +28,25 @@ const RecipeDetails = () => {
       });
   }, [id]);
 
+
+  useEffect(() => {
+    axios.get(`${backendUrl}/recipes/${id}/reviews`)
+      .then(response => {
+        console.log("Fetched reviews:", response.data);
+        setReviews(response.data); // Set reviews correctly
+      })
+      .catch(error => {
+        console.error('Error fetching reviews:', error);
+      });
+  }, [id]);
+
+  // ✅ Handle adding a new review
   const handleAddReview = () => {
     if (newReview.trim()) {
       axios.post(`${backendUrl}/recipes/${id}/reviews`, { content: newReview })
         .then(response => {
-          setNewReview('');
-          setReviewSubmitted(true); // Mark that a review has been submitted
-          alert("Review added successfully!");
-
-          // Update reviews state to include the new review
-          setReviews(prevReviews => [response.data, ...prevReviews]); // Add the new review to the state
+          setReviews([response.data, ...reviews]); // Add new review to state
+          setNewReview(''); // Clear input
         })
         .catch(error => {
           console.error('Error submitting review:', error);
@@ -44,6 +55,27 @@ const RecipeDetails = () => {
     }
   };
 
+  // ✅ Handle editing a review
+  const handleEditReview = (review) => {
+    setEditingReview(review.id);
+    setEditedReviewContent(review.content);
+  };
+
+  // ✅ Handle saving the edited review
+  const handleSaveEdit = (reviewId) => {
+    axios.put(`${backendUrl}/reviews/${reviewId}`, { content: editedReviewContent })
+      .then(() => {
+        setReviews(reviews.map(review =>
+          review.id === reviewId ? { ...review, content: editedReviewContent } : review
+        ));
+        setEditingReview(null); // Exit editing mode
+      })
+      .catch(error => {
+        console.error('Error updating review:', error);
+      });
+  };
+
+  // Handle deleting a review
   const handleDeleteReview = (reviewId) => {
     axios.delete(`${backendUrl}/reviews/${reviewId}`)
       .then(() => {
@@ -51,55 +83,25 @@ const RecipeDetails = () => {
       })
       .catch(error => {
         console.error('Error deleting review:', error);
-        setReviewError("Failed to delete review. Please try again.");
       });
-  };
-
-  const handleEditReview = (review) => {
-    const updatedReviewContent = prompt("Edit your review:", review.content);
-    if (updatedReviewContent) {
-      axios.put(`${backendUrl}/reviews/${review.id}`, { content: updatedReviewContent })
-        .then(() => {
-          setReviews(reviews.map(r =>
-            r.id === review.id ? { ...r, content: updatedReviewContent } : r
-          ));
-        })
-        .catch((error) => {
-          console.error('Error updating review:', error);
-          setReviewError("Failed to update review. Please try again.");
-        });
-    }
   };
 
   return (
     <div>
       <Navbar />
       {error && <p className="error-message">{error}</p>}
+
       {recipe ? (
         <>
           <h1>{recipe.name}</h1>
-          <p><strong>Categories:</strong> {recipe.categories?.map(category => category.name).join(', ')}</p>
+          <p><strong>Category:</strong> {recipe.category?.name}</p>
           <p>{recipe.description}</p>
 
           {reviewError && <p className="error-message">{reviewError}</p>}
 
-          {reviewSubmitted ? (
-            <div>
-              <h2>Reviews</h2>
-              {reviews.length > 0 ? (
-                reviews.map(review => (
-                  <div key={review.id}>
-                    <p>{review.content}</p>
-                    <button onClick={() => handleEditReview(review)}>Edit</button>
-                    <button onClick={() => handleDeleteReview(review.id)}>Delete</button>
-                  </div>
-                ))
-              ) : (
-                <p>No reviews yet.</p>
-              )}
-            </div>
-          ) : (
-            <div>
+          {/* Add a new review section */}
+          {!editingReview && (
+            <>
               <h3>Add a Review</h3>
               <textarea
                 value={newReview}
@@ -108,7 +110,34 @@ const RecipeDetails = () => {
               <button onClick={handleAddReview} disabled={!newReview.trim()}>
                 Submit Review
               </button>
-            </div>
+            </>
+          )}
+
+          {/* Display reviews */}
+          <h2>Reviews</h2>
+          {reviews.length > 0 ? (
+            reviews.map(review => (
+              <div key={review.id}>
+                {editingReview === review.id ? (
+                  <>
+                    <textarea
+                      value={editedReviewContent}
+                      onChange={(e) => setEditedReviewContent(e.target.value)}
+                    />
+                    <button onClick={() => handleSaveEdit(review.id)}>Save</button>
+                    <button onClick={() => setEditingReview(null)}>Cancel</button>
+                  </>
+                ) : (
+                  <>
+                    <p>{review.content}</p>
+                    <button onClick={() => handleEditReview(review)}>Edit</button>
+                    <button onClick={() => handleDeleteReview(review.id)}>Delete</button>
+                  </>
+                )}
+              </div>
+            ))
+          ) : (
+            <p>No reviews yet.</p>
           )}
         </>
       ) : (

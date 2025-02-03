@@ -3,9 +3,7 @@ from .models import db, Category, Recipe, Review
 from flask_cors import CORS
 
 routes = Blueprint('routes', __name__)
-
 CORS(routes, origins=["*"])
-
 
 # Home route
 @routes.route('/', methods=['GET'])
@@ -16,17 +14,14 @@ def home():
 # Category Routes
 # =========================================
 
-# Route to get all categories
 @routes.route('/categories', methods=['GET'])
 def get_categories():
     categories = Category.query.all()
     return jsonify([{'id': category.id, 'name': category.name, 'priority': category.priority} for category in categories])
 
-# Route to create a new category
 @routes.route('/categories', methods=['POST'])
 def create_category():
     data = request.get_json()
-
     if not data or not data.get('name'):
         return jsonify({'message': 'Missing required field: name'}), 400
 
@@ -36,16 +31,13 @@ def create_category():
     )
     db.session.add(new_category)
     db.session.commit()
-    
     return jsonify({'message': 'Category created successfully', 'id': new_category.id}), 201
 
-# Route to get a single category by ID
 @routes.route('/categories/<int:id>', methods=['GET'])
 def get_category(id):
     category = Category.query.get_or_404(id)
     return jsonify({'id': category.id, 'name': category.name, 'priority': category.priority})
 
-# Route to update a category
 @routes.route('/categories/<int:id>', methods=['PUT'])
 def update_category(id):
     category = Category.query.get_or_404(id)
@@ -59,11 +51,10 @@ def update_category(id):
     db.session.commit()
     return jsonify({'message': 'Category updated successfully'}), 200
 
-# Route to delete a category 
 @routes.route('/categories/<int:id>', methods=['DELETE'])
 def delete_category(id):
     category = Category.query.get_or_404(id)
-    
+    Recipe.query.filter_by(category_id=id).delete()  # Ensure recipes are deleted
     db.session.delete(category)
     db.session.commit()
     return jsonify({'message': 'Category deleted successfully and associated recipes removed'}), 200
@@ -72,7 +63,6 @@ def delete_category(id):
 # Recipe Routes
 # =========================================
 
-# Route to get all recipes
 @routes.route('/recipes', methods=['GET'])
 def get_recipes():
     recipes = Recipe.query.all()
@@ -81,16 +71,14 @@ def get_recipes():
         'name': recipe.name,
         'description': recipe.description,
         'category': recipe.category.name,
-        'reviews': [{'id': review.id, 'content': review.content} for review in recipe.reviews]
+        'reviews': [{'id': review.id, 'content': review.content, 'recipe_id': review.recipe_id} for review in recipe.reviews]
     } for recipe in recipes])
 
-# Route to create a new recipe
 @routes.route('/recipes', methods=['POST'])
 def create_recipe():
     data = request.get_json()
-
     if not data or not data.get('name') or not data.get('category_id'):
-        return jsonify({'message': 'Missing required fields: name, description, or category_id'}), 400
+        return jsonify({'message': 'Missing required fields: name or category_id'}), 400
 
     category = Category.query.get(data['category_id'])
     if not category:
@@ -104,15 +92,19 @@ def create_recipe():
     db.session.add(new_recipe)
     db.session.commit()
 
-    return jsonify({'message': 'Recipe created successfully', 'id': new_recipe.id}), 201
+    return jsonify({'message': 'Recipe created successfully', 'id': new_recipe.id, "name": new_recipe.name, "description": new_recipe.description}), 201
 
-# Route to get a recipe by ID (with its reviews)
 @routes.route('/recipes/<int:id>', methods=['GET'])
 def get_recipe(id):
-    recipe = Recipe.query.get(id)
-    if not recipe:
-        return jsonify({'message': 'Recipe not found'}), 404
-    return jsonify(recipe.serialize()) 
+    recipe = Recipe.query.get_or_404(id)
+    recipe_data = {
+        'id': recipe.id,
+        'name': recipe.name,
+        'description': recipe.description,
+        'category': recipe.category.name,
+        'reviews': [{'id': review.id, 'content': review.content} for review in recipe.reviews]
+    }
+    return jsonify(recipe_data)
 
 @routes.route('/recipes/<int:id>', methods=['PUT'])
 def update_recipe(id):
@@ -134,25 +126,20 @@ def update_recipe(id):
 @routes.route('/recipes/<int:id>', methods=['DELETE'])
 def delete_recipe(id):
     recipe = Recipe.query.get_or_404(id)
-    
     db.session.delete(recipe)
     db.session.commit()
-
     return jsonify({'message': 'Recipe deleted successfully and associated reviews removed'}), 200
 
 # =========================================
 # Review Routes
 # =========================================
 
-# Route to add a review for a recipe
 @routes.route('/recipes/<int:id>/reviews', methods=['POST'])
 def add_review(id):
     data = request.get_json()
-
     if not data or not data.get('content'):
         return jsonify({'message': 'Missing required field: content'}), 400
 
-    # Check if the recipe exists
     recipe = Recipe.query.get(id)
     if not recipe:
         return jsonify({'message': 'Recipe not found'}), 404
@@ -166,23 +153,16 @@ def add_review(id):
     
     return jsonify({'message': 'Review added successfully', 'id': new_review.id}), 201
 
-# Route to update a review
 @routes.route('/reviews/<int:id>', methods=['PUT'])
 def update_review(id):
     review = Review.query.get_or_404(id)
-    
     data = request.get_json()
     if not data or not data.get('content'):
         return jsonify({'message': 'Missing required field: content'}), 400
-
-    # Update the review content
     review.content = data['content']
     db.session.commit()
-
     return jsonify({'message': 'Review updated successfully'}), 200
 
-
-# Route to delete a review
 @routes.route('/reviews/<int:id>', methods=['DELETE'])
 def delete_review(id):
     review = Review.query.get_or_404(id)
